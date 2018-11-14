@@ -31,14 +31,26 @@ uint16_t RFM_xfer(uint16_t d)
 
 void RFM_Init(void)
 {
+	SPI_InitTypeDef SPI_InitDef = {
+			.SPI_Direction = SPI_Direction_2Lines_FullDuplex,
+			.SPI_Mode = SPI_Mode_Master,
+			.SPI_DataSize = SPI_DataSize_16b,
+			.SPI_CPOL = SPI_CPOL_High,
+			.SPI_CPHA = SPI_CPHA_2Edge,
+			.SPI_NSS = SPI_NSS_Soft,
+			.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256,
+			.SPI_FirstBit = SPI_FirstBit_MSB,
+			.SPI_CRCPolynomial = 7
+	};
+
+	SPI_Init(SPI1, &SPI_InitDef);
+
 	EXTI_InitTypeDef EXTI_InitStructure = {
 		.EXTI_Mode = EXTI_Mode_Interrupt,
 		.EXTI_Trigger = EXTI_Trigger_Falling,
 		.EXTI_LineCmd = ENABLE,
 		.EXTI_Line = EXTI_Line1
 	};
-
-	SPI_init();
 
 //	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource1);
 
