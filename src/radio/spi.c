@@ -18,18 +18,23 @@ void RFM_SPI_init(void)
 		.SPI_CPOL = SPI_CPOL_Low,
 		.SPI_CPHA = SPI_CPHA_1Edge,
 		.SPI_NSS = SPI_NSS_Soft,
-		.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32,
+		.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4,
 		.SPI_FirstBit = SPI_FirstBit_MSB,
-		.SPI_CRCPolynomial = 7
+		.SPI_CRCPolynomial = 7,
 	};
+	SPI_Cmd(SPI1, DISABLE);
 
 	SPI_Init(SPI1, &SPIConf);
 	SPI_Cmd(SPI1, ENABLE);
+//	SPI_TIModeCmd(SPI1, DISABLE);
+//	SPI_NSSPulseModeCmd(SPI1, DISABLE);
 }
 
 /* Simple Byte transmit */
 uint16_t SPI_Xfer(uint16_t data)
 {
+	uint16_t ret;
+//	SPI_Cmd(SPI1, ENABLE);
 	while ((SPI1->SR & SPI_I2S_FLAG_TXE) == RESET);
 
 	// Send byte through the SPI1 peripheral
@@ -37,8 +42,9 @@ uint16_t SPI_Xfer(uint16_t data)
 
 	// Wait to receive a byte
 	while ((SPI1->SR & SPI_I2S_FLAG_RXNE) == RESET);
-
-	return SPI1->DR;
+	ret = SPI1->DR;
+//	SPI_Cmd(SPI1, DISABLE);
+	return ret;
 }
 
 

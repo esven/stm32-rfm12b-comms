@@ -10,7 +10,7 @@ NVIC_InitTypeDef EXT_Int = {
 	.NVIC_IRQChannelPreemptionPriority = 15,
 	.NVIC_IRQChannelSubPriority = 0,
 	.NVIC_IRQChannelCmd = ENABLE,
-	.NVIC_IRQChannel = EXTI1_IRQn
+	.NVIC_IRQChannel = EXTI9_5_IRQn
 };
 
 static uint8_t state = RFM_STATE_SLEEP;
@@ -38,10 +38,11 @@ void RFM_Init(void)
 		.EXTI_Mode = EXTI_Mode_Interrupt,
 		.EXTI_Trigger = EXTI_Trigger_Falling,
 		.EXTI_LineCmd = ENABLE,
-		.EXTI_Line = EXTI_Line1
+		.EXTI_Line = EXTI_Line7
 	};
 
-//	GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource1);
+	 /* Connect EXTI Line0 to PC7 pin */
+	 SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource7);
 
 	EXTI_Init(&EXTI_InitStructure);
 
@@ -244,15 +245,17 @@ uint8_t RFM_Send(uint16_t id, uint8_t *data, uint8_t len)
 }
 
 
-void EXTI1_IRQHandler(void)
+void EXTI9_5_IRQHandler(void)
 {
 	static uint8_t chksum;
 	static uint16_t status;
 	static uint8_t data;
 
-	EXTI_ClearITPendingBit(EXTI_Line1);
+	EXTI_ClearITPendingBit(EXTI_Line7);
 
-	status = RFM_xfer(0x0000);
+	do {
+		status = RFM_xfer(0x0000);
+	} while (!status);
 
 	// ignore LBD, EXT, WKUP, POR, FFOV
 	if (status & 0x8000) {
