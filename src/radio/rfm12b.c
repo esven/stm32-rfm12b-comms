@@ -1,6 +1,7 @@
 #include "stm32f30x.h"
 
-//#include "spi.h"
+#include "platform.h"
+#include "spi.h"
 //#include "buf.h"
 
 #include "rfm12b.h"
@@ -21,29 +22,17 @@ static uint8_t RFM_Len;
 uint16_t RFM_xfer(uint16_t d)
 {
 	uint16_t ret;
-//	RFM_CS(Bit_RESET);
-//
-//	ret = SPI_Xfer(d);
-//
-//	RFM_CS(Bit_SET);
+	RFM_CS(Bit_RESET);
+
+	ret = SPI_Xfer(d);
+
+	RFM_CS(Bit_SET);
 	return ret;
 }
 
 void RFM_Init(void)
 {
-	SPI_InitTypeDef SPI_InitDef = {
-			.SPI_Direction = SPI_Direction_2Lines_FullDuplex,
-			.SPI_Mode = SPI_Mode_Master,
-			.SPI_DataSize = SPI_DataSize_16b,
-			.SPI_CPOL = SPI_CPOL_High,
-			.SPI_CPHA = SPI_CPHA_2Edge,
-			.SPI_NSS = SPI_NSS_Soft,
-			.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256,
-			.SPI_FirstBit = SPI_FirstBit_MSB,
-			.SPI_CRCPolynomial = 7
-	};
-
-	SPI_Init(SPI1, &SPI_InitDef);
+	RFM_SPI_init();
 
 	EXTI_InitTypeDef EXTI_InitStructure = {
 		.EXTI_Mode = EXTI_Mode_Interrupt,
@@ -52,7 +41,7 @@ void RFM_Init(void)
 		.EXTI_Line = EXTI_Line1
 	};
 
-//	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource1);
+//	GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource1);
 
 	EXTI_Init(&EXTI_InitStructure);
 
