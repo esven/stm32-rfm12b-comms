@@ -74,7 +74,7 @@ void RFM_Init(void)
 	RFM_xfer(0xCC77);
 	RFM_xfer(0xE000); // NOT USE
 	RFM_xfer(0xC800); // NOT USE
-	RFM_xfer(0xC049); // 1.66MHz,3.1V
+	RFM_xfer(0xC040); // 1.66MHz,3.1V
 
 	RFM_IdleMode(0);
 }
@@ -250,12 +250,14 @@ void EXTI9_5_IRQHandler(void)
 	static uint8_t chksum;
 	static uint16_t status;
 	static uint8_t data;
+	uint8_t count = 0;
 
 	EXTI_ClearITPendingBit(EXTI_Line7);
 
 	do {
 		status = RFM_xfer(0x0000);
-	} while (!status);
+		count++;
+	} while (!status && count < 10);
 
 	// ignore LBD, EXT, WKUP, POR, FFOV
 	if (status & 0x8000) {
