@@ -67,8 +67,10 @@ int main(void)
 	printf("Hello World!\r\n");
 	RFM_Init();
 	while (1) {
+		if (RFM_IsIdle()) {
 		delay_nms(1000);
 		RFM_Send(0x0012, send_buffer, sizeof(send_buffer));
+		}
 	}
 }
 

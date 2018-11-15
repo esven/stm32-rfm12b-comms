@@ -77,6 +77,9 @@ void RFM_Init(void)
 	RFM_xfer(0xC040); // 1.66MHz,3.1V
 
 	RFM_IdleMode(0);
+	for (int i = 0; i < sizeof(RFM_Buffer); i++) {
+		RFM_Buffer[i] = 0;
+	}
 }
 
 void RFM_SetDataRate(uint8_t r)
