@@ -58,9 +58,10 @@ void RFM_Init(void)
 		RFM_xfer(0x0000);
 
 	RFM_SetBand(RFM_BAND_868MHZ);
-	RFM_SetFreq(0x640); // 868mhz = 860 + x * 0.0050
-	RFM_SetDataRate(6); // ~ 49.xx kbps
-	// RFM_xfer(0xC606); // ~ 49.xx kbps
+	//RFM_SetFreq(0x640); // 868mhz = 860 + x * 0.0050
+	RFM_SetFreq(0x708); // 869mhz = 860 + x * 0.0050
+//	RFM_SetDataRate(6); // ~ 49.xx kbps
+	RFM_SetDataRate(8); // ~ 39 kbps
 
 	//RFM_xfer(0x94A2); // VDI,FAST,134kHz,0dBm,-91dBm
 	RFM_SetRXWidth(5);
