@@ -41,10 +41,17 @@ void GPIO_Configuration(void)
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_5);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_5);
 
-	// PB6 - RFM Chip Select
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+	// PB6 - RFM Chip Select, PB10 - LED2
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	// PB6 - RFM Chip Select, PB10 - LED2
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -60,16 +67,21 @@ void GPIO_Configuration(void)
 
 int main(void)
 {
-	uint8_t send_buffer[] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+	uint8_t send_buffer[] = { 0xCA, 0xFE, 0xAF, 0xFE, 0xCA, 0xFF, 0xEE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 	RCC_Configuration();
 	GPIO_Configuration();
+	GPIO_WriteBit(GPIOA, GPIO_Pin_8, Bit_SET);
+	GPIO_WriteBit(GPIOB, GPIO_Pin_10, Bit_SET);
 
 	printf("Hello World!\r\n");
 	RFM_Init();
 	while (1) {
 		if (RFM_IsIdle()) {
 		delay_nms(1000);
-		RFM_Send(0x0012, send_buffer, sizeof(send_buffer));
+		GPIO_WriteBit(GPIOA, GPIO_Pin_8, Bit_SET);
+		RFM_Send(0x0001, send_buffer, sizeof(send_buffer));
+//			delay_1ms();
+//			RFM_RecvMode();
 		}
 	}
 }

@@ -21,6 +21,19 @@ enum {
 #define RFM_BAND_868MHZ  2
 #define RFM_BAND_915MHZ  3
 
+#define RFM_STATUS_FFIT_RGIT  0x8000
+#define RFM_STATUS_POR        0x4000
+#define RFM_STATUS_FFOV_RGUR  0x2000
+#define RFM_STATUS_WKUP       0x1000
+#define RFM_STATUS_EXT        0x0800
+#define RFM_STATUS_LBD        0x0400
+#define RFM_STATUS_FFEM       0x0200
+#define RFM_STATUS_ATS_RSSI   0x0100
+#define RFM_STATUS_DQD        0x0080
+#define RFM_STATUS_CRL        0x0040
+#define RFM_STATUS_ATGL       0x0020
+#define RFM_STATUS_OFFS_SIGN  0x0010
+#define RFM_STATUS_OFFS_MASK  0x000F
 
 #define RFM_RECV_MODE    0x82D9
 #define RFM_XMIT_MODE    0x8239

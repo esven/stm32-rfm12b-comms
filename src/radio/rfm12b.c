@@ -261,10 +261,17 @@ void EXTI9_5_IRQHandler(void)
 	do {
 		status = RFM_xfer(0x0000);
 		count++;
-	} while (!status && count < 10);
+	} while (!status && count < 2);
+
+	if (status & RFM_STATUS_FFOV_RGUR) {
+		GPIO_WriteBit(GPIOA, GPIO_Pin_8, Bit_RESET);
+	} else {
+		GPIO_WriteBit(GPIOA, GPIO_Pin_8, Bit_SET);
+	}
 
 	// ignore LBD, EXT, WKUP, POR, FFOV
 	if (status & 0x8000) {
+		GPIO_WriteBit(GPIOB, GPIO_Pin_10, Bit_RESET);
 		if ((state == RFM_STATE_SCAN) || (state == RFM_STATE_IDLE)) {
 			data = RFM_xfer(RFM_RX_REG);
 		} else if (state == RFM_STATE_SNIFF) {
@@ -309,11 +316,13 @@ void EXTI9_5_IRQHandler(void)
 				chksum = 0;
 
 //				Mdm_RfmxDoneCb();
+				GPIO_WriteBit(GPIOB, GPIO_Pin_10, Bit_SET);
 				return;
 			}
 
 			RFM_xfer(RFM_TX_REG | RFM_Buffer[RFM_Idx]);
 			RFM_Idx++;
+			GPIO_WriteBit(GPIOB, GPIO_Pin_10, Bit_SET);
 		}
 	}
 }
